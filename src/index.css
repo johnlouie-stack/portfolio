@@ -1,0 +1,115 @@
+/* ── Tailwind base layers ──────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap");
+
+/* ── Global resets & base ─────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* prevent layout shift from scrollbar appearing */
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Sora", "DM Sans", system-ui, -apple-system, sans-serif;
+    /* never let anything cause horizontal overflow */
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar (webkit) */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  /* Remove default button styles */
+  button {
+    cursor: pointer;
+  }
+
+  /* Smooth focus outlines */
+  :focus-visible {
+    outline: 2px solid #22d3ee; /* cyan-400 */
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ── Custom component utilities ───────────────────────────────────────────── */
+@layer components {
+  /* Gradient text shorthand */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+  }
+
+  /* Glass card */
+  .glass {
+    @apply bg-white/[0.04] border border-white/10 backdrop-blur-sm;
+  }
+
+  /* Section padding shorthand */
+  .section-padding {
+    @apply py-24 lg:py-32;
+  }
+
+  /* Consistent max-width container */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
+  }
+}
+
+/* ── Keyframe animations ──────────────────────────────────────────────────── */
+@layer utilities {
+  /* Floating bob used on hero elements */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-12px); }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  /* Slow spin for decorative rings */
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 12s linear infinite;
+  }
+
+  /* Shimmer for skeleton loaders (future use) */
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite;
+  }
+}
