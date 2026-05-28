@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import emailjs from "@emailjs/browser";
+import leoProfanity from "leo-profanity";
 
 import GlowOrb from "./GlowOrb.jsx";
 import { IconSend, IconArrow, IconGithub, IconFacebook, IconInstagram } from "../assets/icons.jsx";
@@ -10,6 +11,10 @@ import { SOCIAL_LINKS } from "../utils/constants.js";
 const SERVICE_ID  = "service_8ghlovl";
 const TEMPLATE_ID = "template_73h5xmd";
 const PUBLIC_KEY  = "R6XJ_MQWv07FpazaG";
+
+// ── Profanity filter setup ─────────────────────────────────────────────────
+leoProfanity.loadDictionary(); // loads built-in EN word list
+leoProfanity.add(["gago", "putangina", "tangina", "bobo", "ulol", "pakshet", "inutil", "tarantado"]); // add common Tagalog swear words
 
 const RATE_LIMIT_MS   = 60_000; // 1 minute between submissions
 const MAX_MESSAGE_LEN = 2000;
@@ -120,6 +125,8 @@ const Contact = () => {
       newFieldErrors.message = `Message must be at least ${MIN_MESSAGE_LEN} characters.`;
     else if (trimmed.message.length > MAX_MESSAGE_LEN)
       newFieldErrors.message = `Message must be under ${MAX_MESSAGE_LEN} characters.`;
+    else if (leoProfanity.check(trimmed.message))
+      newFieldErrors.message = "Please keep your message respectful and free of profanity.";
 
     if (Object.keys(newFieldErrors).length > 0) {
       setFieldErrors(newFieldErrors);
