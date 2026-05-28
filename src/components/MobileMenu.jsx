@@ -1,14 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
 
-import { IconArrow, IconGithub, IconLinkedin, IconTwitter } from "../assets/icons.jsx";
+import { IconGithub, IconFacebook, IconInstagram } from "../assets/icons.jsx";
 import { NAV_LINKS, SOCIAL_LINKS } from "../utils/constants.js";
 import { scrollTo } from "../utils/scrollTo.js";
 import { slideInRight } from "../utils/animations.js";
 
 const SOCIAL_ICONS = {
   github:   <IconGithub />,
-  linkedin: <IconLinkedin />,
-  twitter:  <IconTwitter />,
+  facebook: <IconFacebook />,
+  instagram: <IconInstagram />,
 };
 
 /**

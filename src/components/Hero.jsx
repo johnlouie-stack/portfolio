@@ -47,7 +47,7 @@ const Hero = () => {
       />
 
       {/* Ambient glow orbs */}
-      <GlowOrb className="w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] bg-violet-600 -bottom-20 -left-40" />
+      
       <GlowOrb className="w-[200px] h-[200px] lg:w-[300px] lg:h-[300px] bg-blue-500 top-1/3 left-1/2 -translate-x-1/2" />
 
       {/* Content */}

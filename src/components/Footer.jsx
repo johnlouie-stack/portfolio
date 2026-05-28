@@ -1,9 +1,9 @@
-import { IconCode, IconGithub, IconLinkedin, IconTwitter } from "../assets/icons.jsx";
+import { IconCode, IconGithub, IconFacebook, IconInstagram } from "../assets/icons.jsx";
 import { NAV_LINKS, SOCIAL_LINKS } from "../utils/constants.js";
 import { scrollTo } from "../utils/scrollTo.js";
 
 const SOCIAL_ICONS = {
-  github: <IconGithub />, linkedin: <IconLinkedin />, twitter: <IconTwitter />,
+  github: <IconGithub />, facebook: <IconFacebook />, instagram: <IconInstagram />,
 };
 
 const Footer = () => {

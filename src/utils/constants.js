@@ -3,9 +3,9 @@
 export const NAV_LINKS = ["home", "about", "skills", "contact"];
 
 export const SOCIAL_LINKS = [
-  { label: "GitHub",      href: "https://github.com/",   key: "github"   },
-  { label: "LinkedIn",    href: "https://linkedin.com/",  key: "linkedin" },
-  { label: "Twitter / X", href: "https://x.com/",        key: "twitter"  },
+  { key: "github",    label: "GitHub",    href: "https://github.com/johnlouie-stack" },
+  { key: "facebook",  label: "Facebook",  href: "https://www.facebook.com/louie.diaz.7902" },
+  { key: "instagram", label: "Instagram", href: "https://www.instagram.com/ewulz_" },
 ];
 
 export const SKILLS_DATA = [
@@ -73,3 +73,5 @@ export const ABOUT_STATS = [
   { icon: "☕", title: "Cups of Coffee",  value: "∞"      },
   { icon: "📍", title: "Based in", value: "Philippines" },
 ];
+
+
