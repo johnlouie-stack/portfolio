@@ -87,10 +87,10 @@ export const SKILLS_DATA = [
 ];
 
 export const ABOUT_STATS = [
-  { icon: "🎓", title: "IT Student",      value: "3rd Yr" },
-  { icon: "💻", title: "Projects Built",  value: "10+"    },
-  { icon: "☕", title: "Cups of Coffee",  value: "∞"      },
-  { icon: "📍", title: "Based in", value: "Philippines" },
+  { title: "IT Student",      value: "3rd Yr" },
+  { title: "Projects Built",  value: "10+"    },
+  { title: "Cups of Coffee",  value: "∞"      },
+  { title: "Based in", value: "Philippines" },
 ];
 
 

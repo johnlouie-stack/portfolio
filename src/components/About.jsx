@@ -133,11 +133,6 @@ const About = () => {
                 to-black/[0.01] dark:to-white/[0.02] backdrop-blur-sm"
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20
-                  to-violet-600/20 border border-black/10 dark:border-white/10
-                  flex items-center justify-center flex-shrink-0 text-lg">
-                  🚀
-                </div>
                 <div>
                   <p className="text-gray-900 dark:text-white font-semibold mb-1">Currently Building</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">

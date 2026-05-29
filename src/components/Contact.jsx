@@ -318,8 +318,8 @@ const Contact = () => {
             className="lg:col-span-2 space-y-6"
           >
             {[
-              { emoji: "📬", title: "Email",    content: "johnlouiediaz04@gmail.com" },
-              { emoji: "📍", title: "Location", content: "Caloocan City, Philippines" },
+              { title: "Email",    content: "johnlouiediaz04@gmail.com" },
+              { title: "Location", content: "Caloocan City, Philippines" },
             ].map(({ emoji, title, content }) => (
               <motion.div key={title} variants={fadeUp}
                 className="p-6 rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.07] dark:border-white/[0.07]"
@@ -332,7 +332,7 @@ const Contact = () => {
             <motion.div variants={fadeUp}
               className="p-6 rounded-2xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.07] dark:border-white/[0.07]"
             >
-              <h3 className="text-gray-900 dark:text-white font-semibold mb-3">🌐 Social Media</h3>
+              <h3 className="text-gray-900 dark:text-white font-semibold mb-3">Social Media</h3>
               <div className="space-y-3">
                 {SOCIAL_LINKS.map(({ key, label, href }) => (
                   <a key={key} href={href} target="_blank" rel="noopener noreferrer"
