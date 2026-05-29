@@ -141,8 +141,7 @@ const About = () => {
                 <div>
                   <p className="text-gray-900 dark:text-white font-semibold mb-1">Currently Building</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                    Full-stack web apps with React &amp; Node.js, exploring cloud
-                    deployment and modern DevOps workflows.
+                    Fleet Connect: A Multi Platform Fleet Management System built with React, Node.js, and PostgreSQL. It offers real-time tracking, Artificial Intelligence scheduling, and analytics to optimize fleet operations.
                   </p>
                 </div>
               </div>

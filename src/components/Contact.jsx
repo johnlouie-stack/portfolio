@@ -12,23 +12,31 @@ const SERVICE_ID  = "service_8ghlovl";
 const TEMPLATE_ID = "template_73h5xmd";
 const PUBLIC_KEY  = "R6XJ_MQWv07FpazaG";
 
-// ── Profanity filter setup ─────────────────────────────────────────────────
-leoProfanity.loadDictionary(); // loads built-in EN word list
-leoProfanity.add(["gago", "putangina", "tangina", "bobo", "ulol", "pakshet", "inutil", "tarantado"]); // add common Tagalog swear words
+leoProfanity.loadDictionary();
+leoProfanity.add(["gago", "putangina", "tangina", "bobo", "ulol", "pakshet", "inutil", "tarantado"]);
 
-const RATE_LIMIT_MS   = 60_000; // 1 minute between submissions
+const RATE_LIMIT_MS   = 60_000;
 const MAX_MESSAGE_LEN = 2000;
 const MIN_MESSAGE_LEN = 10;
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const SOCIAL_ICONS = {
   github: <IconGithub />, facebook: <IconFacebook />, instagram: <IconInstagram />,
 };
 
-// ── MX record check via Cloudflare DNS-over-HTTPS ──────────────────────────
-// Confirms the email's domain actually has mail servers — catches fake domains
-// like "sanfkasdas.com" that pass regex but can't receive email.
+const DISPOSABLE_DOMAINS = [
+  "mailinator.com", "tempmail.com", "guerrillamail.com", "10minutemail.com",
+  "throwaway.email", "fakeinbox.com", "trashmail.com", "yopmail.com",
+  "sharklasers.com", "guerrillamailblock.com", "maildrop.cc", "dispostable.com",
+  "spamgourmet.com", "spamgourmet.net", "mailnull.com", "spamcorpse.com",
+  "spamfree24.org", "tempinbox.com", "filzmail.com", "spammotel.com",
+];
+
+function isDisposableEmail(email) {
+  const domain = email.split("@")[1]?.toLowerCase();
+  return DISPOSABLE_DOMAINS.includes(domain);
+}
+
 async function domainHasMxRecord(email) {
   const domain = email.split("@")[1];
   try {
@@ -36,12 +44,11 @@ async function domainHasMxRecord(email) {
       `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=MX`,
       { headers: { Accept: "application/dns-json" } }
     );
-    if (!res.ok) return true; // network hiccup → don't block the user
+    if (!res.ok) return true;
     const data = await res.json();
-    // Status 0 = NOERROR, and at least one Answer record means MX exists
     return data.Status === 0 && Array.isArray(data.Answer) && data.Answer.length > 0;
   } catch {
-    return true; // fetch failed (offline, CORS, etc.) → fail open
+    return true;
   }
 }
 
@@ -50,19 +57,16 @@ function isRateLimited() {
     const last = localStorage.getItem("lastMessageSent");
     return last && Date.now() - Number(last) < RATE_LIMIT_MS;
   } catch {
-    return false; // localStorage unavailable (private browsing, etc.)
+    return false;
   }
 }
 
 function setRateLimitTimestamp() {
   try {
     localStorage.setItem("lastMessageSent", String(Date.now()));
-  } catch {
-    // silently fail
-  }
+  } catch {}
 }
 
-// ── FormField ───────────────────────────────────────────────────────────────
 const FormField = ({ label, name, type = "text", placeholder, value, onChange, required, error }) => (
   <motion.div variants={fadeUp}>
     <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
@@ -83,31 +87,30 @@ const FormField = ({ label, name, type = "text", placeholder, value, onChange, r
           : "border-black/10 dark:border-white/10 focus:border-cyan-500/50 focus:ring-cyan-500/20"
         }`}
     />
-    {error && (
-      <p className="mt-1.5 text-xs text-red-400">{error}</p>
-    )}
+    {error && <p className="mt-1.5 text-xs text-red-400">{error}</p>}
   </motion.div>
 );
 
-// ── Contact ─────────────────────────────────────────────────────────────────
 const Contact = () => {
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
-  const [form, setForm]           = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", message: "", honeypot: "" });
   const [fieldErrors, setFieldErrors] = useState({});
-  const [status, setStatus]       = useState("idle"); // "idle" | "sending" | "sent" | "error"
-  const [errorMsg, setErrorMsg]   = useState("");
+  const [status, setStatus] = useState("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    // Clear individual field error on change
     setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ── Honeypot — silent bot block ──────────────────────────────
+    if (form.honeypot) return;
 
     const trimmed = {
       name:    form.name.trim(),
@@ -117,25 +120,49 @@ const Contact = () => {
 
     // ── Field-level validation ───────────────────────────────────
     const newFieldErrors = {};
-    if (!trimmed.name)    newFieldErrors.name    = "Name is required.";
-    if (!trimmed.email)   newFieldErrors.email   = "Email is required.";
+
+    // Add this helper at the top with your other functions
+    function looksLikeFakeName(name) {
+  // Too short
+    if (name.length < 2) return true;
+  // All same character (e.g. "aaaaaaa")
+    if (/^(.)\1+$/.test(name)) return true;
+  // No vowels at all (e.g. "asdasd", "qwerty")
+    if (!/[aeiou]/i.test(name)) return true;
+  // Random keyboard mashing pattern (4+ consecutive consonants)
+    if (/[^aeiou\s]{5,}/i.test(name)) return true;
+    return false;
+  }
+    if (!trimmed.name) newFieldErrors.name = "Name is required.";
+
+    else if (looksLikeFakeName(trimmed.name)) newFieldErrors.name = "Please enter your real name.";
+
+    if (!trimmed.name) newFieldErrors.name = "Name is required.";
+
+    if (!trimmed.email) newFieldErrors.email = "Email is required.";
+
     else if (!EMAIL_REGEX.test(trimmed.email)) newFieldErrors.email = "Enter a valid email address.";
+
+    else if (isDisposableEmail(trimmed.email)) newFieldErrors.email = "Disposable email addresses are not allowed.";
+
     if (!trimmed.message) newFieldErrors.message = "Message is required.";
+
     else if (trimmed.message.length < MIN_MESSAGE_LEN)
       newFieldErrors.message = `Message must be at least ${MIN_MESSAGE_LEN} characters.`;
+
     else if (trimmed.message.length > MAX_MESSAGE_LEN)
       newFieldErrors.message = `Message must be under ${MAX_MESSAGE_LEN} characters.`;
+    
     else if (leoProfanity.check(trimmed.message))
       newFieldErrors.message = "Please keep your message respectful and free of profanity.";
 
     if (Object.keys(newFieldErrors).length > 0) {
       setFieldErrors(newFieldErrors);
-      return; // stop — errors shown inline
+      return;
     }
 
-    // ── MX record check — verify domain can actually receive email ────
-    // Catches fake domains like "sanfkasdas.com" that pass regex but don't exist.
-    setStatus("sending"); // show spinner while DNS resolves
+    // ── MX record check ──────────────────────────────────────────
+    setStatus("sending");
     const mxValid = await domainHasMxRecord(trimmed.email);
     if (!mxValid) {
       setFieldErrors({ email: "This email domain doesn't exist or can't receive mail." });
@@ -153,18 +180,15 @@ const Contact = () => {
 
     // ── Send ─────────────────────────────────────────────────────
     setStatus("sending");
-
     try {
       await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
+        SERVICE_ID, TEMPLATE_ID,
         { name: trimmed.name, email: trimmed.email, message: trimmed.message },
         { publicKey: PUBLIC_KEY }
       );
-
       setRateLimitTimestamp();
       setStatus("sent");
-      setForm({ name: "", email: "", message: "" });
+      setForm({ name: "", email: "", message: "", honeypot: "" });
       setFieldErrors({});
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err) {
@@ -200,7 +224,6 @@ const Contact = () => {
 
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
 
-        {/* ── Heading ── */}
         <motion.div
           variants={stagger} initial="hidden" animate={inView ? "visible" : "hidden"}
           className="text-center mb-16"
@@ -221,12 +244,19 @@ const Contact = () => {
 
         <div className="grid lg:grid-cols-5 gap-10 lg:gap-14 items-start">
 
-          {/* ── Form ── */}
           <motion.div
             variants={stagger} initial="hidden" animate={inView ? "visible" : "hidden"}
             className="lg:col-span-3"
           >
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+
+              {/* Honeypot — hidden from real users, traps bots */}
+              <input
+                type="text" name="honeypot" value={form.honeypot}
+                onChange={handleChange} tabIndex={-1} autoComplete="off"
+                aria-hidden="true"
+                className="absolute opacity-0 pointer-events-none h-0 w-0 overflow-hidden"
+              />
 
               <FormField
                 label="Your Name" name="name" placeholder="Juan Dela Cruz"
@@ -254,8 +284,7 @@ const Contact = () => {
                 <textarea
                   name="message" value={form.message} onChange={handleChange}
                   required rows={5} placeholder="Tell me about your project..."
-                  aria-invalid={!!fieldErrors.message}
-                  maxLength={MAX_MESSAGE_LEN}
+                  aria-invalid={!!fieldErrors.message} maxLength={MAX_MESSAGE_LEN}
                   className={`w-full px-4 py-3.5 rounded-xl
                     bg-black/[0.04] dark:bg-white/[0.04]
                     border transition-all duration-200 text-sm resize-none
@@ -267,19 +296,15 @@ const Contact = () => {
                       : "border-black/10 dark:border-white/10 focus:border-cyan-500/50 focus:ring-cyan-500/20"
                     }`}
                 />
-                {fieldErrors.message && (
-                  <p className="mt-1.5 text-xs text-red-400">{fieldErrors.message}</p>
-                )}
+                {fieldErrors.message && <p className="mt-1.5 text-xs text-red-400">{fieldErrors.message}</p>}
               </motion.div>
 
               <motion.div variants={fadeUp}>
                 <button
-                  type="submit"
-                  disabled={status === "sending"}
+                  type="submit" disabled={status === "sending"}
                   className={`group w-full sm:w-auto flex items-center justify-center gap-2.5
                     px-8 py-4 bg-gradient-to-r ${buttonColors[status]} text-white
-                    font-semibold rounded-xl hover:shadow-xl
-                    hover:scale-[1.02] transition-all duration-300`}
+                    font-semibold rounded-xl hover:shadow-xl hover:scale-[1.02] transition-all duration-300`}
                 >
                   {buttonLabel[status]}
                 </button>
@@ -288,13 +313,12 @@ const Contact = () => {
             </form>
           </motion.div>
 
-          {/* ── Side info ── */}
           <motion.div
             variants={stagger} initial="hidden" animate={inView ? "visible" : "hidden"}
             className="lg:col-span-2 space-y-6"
           >
             {[
-              { emoji: "📬", title: "Email",    content: "johnlouie@example.com" },
+              { emoji: "📬", title: "Email",    content: "johnlouiediaz04@gmail.com" },
               { emoji: "📍", title: "Location", content: "Caloocan City, Philippines" },
             ].map(({ emoji, title, content }) => (
               <motion.div key={title} variants={fadeUp}

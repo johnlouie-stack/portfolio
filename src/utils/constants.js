@@ -15,15 +15,34 @@ export const SKILLS_DATA = [
     color: "from-orange-500/20 to-red-600/20",
     border: "hover:border-orange-500/40",
     glow:   "hover:shadow-orange-500/10",
-    level: 90,
+    level: 95,
   },
+
+  {
+  name: "Python",
+  iconKey: "python",
+  color: "from-blue-500/20 to-yellow-500/20",
+  border: "hover:border-blue-400/40",
+  glow:   "hover:shadow-blue-400/10",
+  level: 80,
+  },
+
+  {
+  name: "Java",
+  iconKey: "java",
+  color: "from-gray-500/20 to-gray-700/20",
+  border: "hover:border-gray-400/40",
+  glow:   "hover:shadow-gray-400/10",
+  level: 95,
+  },
+
   {
     name: "CSS3",
     iconKey: "css",
     color: "from-blue-500/20 to-blue-700/20",
     border: "hover:border-blue-500/40",
     glow:   "hover:shadow-blue-500/10",
-    level: 85,
+    level: 90,
   },
   {
     name: "JavaScript",
@@ -31,7 +50,7 @@ export const SKILLS_DATA = [
     color: "from-yellow-400/20 to-yellow-600/20",
     border: "hover:border-yellow-400/40",
     glow:   "hover:shadow-yellow-400/10",
-    level: 80,
+    level: 90,
   },
   {
     name: "React",
@@ -39,7 +58,7 @@ export const SKILLS_DATA = [
     color: "from-cyan-400/20 to-cyan-600/20",
     border: "hover:border-cyan-400/40",
     glow:   "hover:shadow-cyan-400/10",
-    level: 78,
+    level: 85,
   },
   {
     name: "Tailwind CSS",
@@ -55,7 +74,7 @@ export const SKILLS_DATA = [
     color: "from-green-500/20 to-green-700/20",
     border: "hover:border-green-500/40",
     glow:   "hover:shadow-green-500/10",
-    level: 70,
+    level: 80,
   },
   {
     name: "Git",
@@ -63,7 +82,7 @@ export const SKILLS_DATA = [
     color: "from-orange-600/20 to-red-700/20",
     border: "hover:border-orange-600/40",
     glow:   "hover:shadow-orange-600/10",
-    level: 75,
+    level: 90,
   },
 ];
 

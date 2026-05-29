@@ -4,11 +4,13 @@ import { useTheme } from "../context/ThemeContext";
 
 import { fadeUp, stagger } from "../utils/animations.js";
 import { SKILLS_DATA } from "../utils/constants.js";
-import { IconHtml, IconCss, IconJs, IconReact, IconTailwind, IconNode, IconGit } from "../assets/icons.jsx";
+import { IconHtml, IconCss, IconJs, IconReact, IconTailwind, IconNode, IconGit, IconPython, IconJava } from "../assets/icons.jsx";
 
 const ICON_MAP = {
   html: <IconHtml />, css: <IconCss />, js: <IconJs />,
   react: <IconReact />, tailwind: <IconTailwind />, node: <IconNode />, git: <IconGit />,
+  python: <IconPython />,
+  java:   <IconJava />,
 };
 
 // Stronger colors for light mode, subtle for dark mode
@@ -20,6 +22,8 @@ const LIGHT_COLORS = {
   tailwind: "from-teal-100 to-teal-200 border-teal-200 hover:border-teal-400",
   node:     "from-green-100 to-green-200 border-green-200 hover:border-green-400",
   git:      "from-orange-100 to-red-200 border-orange-200 hover:border-orange-400",
+  python: "from-blue-100 to-yellow-100 border-blue-200 hover:border-blue-400",
+  java: "from-gray-100 to-gray-200 border-gray-200 hover:border-gray-400",
 };
 
 const SkillCard = ({ name, iconKey, color, border, glow, level, index }) => {
